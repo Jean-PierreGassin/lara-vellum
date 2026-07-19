@@ -7,7 +7,7 @@
     @hasSection('description')
         <meta name="description" content="@yield('description')">
     @endif
-    <link rel="stylesheet" href="{{ route('lara-vellum.assets.css') }}">
+    <link rel="stylesheet" href="{{ $stylesheetUrl }}">
 </head>
 <body class="min-h-full bg-stone-50 text-stone-800 antialiased dark:bg-stone-950 dark:text-stone-200">
     <div class="mx-auto flex min-h-full max-w-2xl flex-col px-6">

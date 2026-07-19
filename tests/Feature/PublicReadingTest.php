@@ -70,5 +70,7 @@ it('serves the compiled stylesheet and script', function () {
         ->assertOk()
         ->assertHeader('content-type', 'text/css; charset=UTF-8');
 
-    get(route('lara-vellum.assets.js'))->assertOk();
+    get(route('lara-vellum.assets.js'))
+        ->assertOk()
+        ->assertHeader('content-type', 'text/javascript; charset=UTF-8');
 });

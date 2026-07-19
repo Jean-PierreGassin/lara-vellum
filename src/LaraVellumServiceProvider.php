@@ -4,9 +4,13 @@ namespace JeanPierreGassin\LaraVellum;
 
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\ServiceProvider;
 use JeanPierreGassin\LaraVellum\Contracts\MarkdownRenderer;
+use JeanPierreGassin\LaraVellum\Enums\Asset;
 use JeanPierreGassin\LaraVellum\Http\RouteRegistrar;
+use JeanPierreGassin\LaraVellum\Support\AssetUrlGenerator;
 use JeanPierreGassin\LaraVellum\Support\CommonMarkRenderer;
 use JeanPierreGassin\LaraVellum\Support\StaticPageGenerator;
 
@@ -17,6 +21,10 @@ class LaraVellumServiceProvider extends ServiceProvider
     private const string LANG_DIR = 'resources/lang';
     private const string MIGRATIONS_DIR = 'database/migrations';
     private const string VIEW_NAMESPACE = 'lara-vellum';
+    private const array ASSET_VIEWS = [
+        'lara-vellum::dashboard.layout',
+        'lara-vellum::public.layout',
+    ];
 
     public function register(): void
     {
@@ -48,6 +56,7 @@ class LaraVellumServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(paths: $this->packagePath(self::MIGRATIONS_DIR));
 
+        $this->shareAssetUrls();
         $this->registerDefaultGate();
         $this->registerRoutes();
 
@@ -110,6 +119,19 @@ class LaraVellumServiceProvider extends ServiceProvider
                 $this->packagePath(self::LANG_DIR) => $this->app->langPath(path: 'vendor/lara-vellum'),
             ],
             groups: 'lara-vellum-lang',
+        );
+    }
+
+    private function shareAssetUrls(): void
+    {
+        $this->app->make(ViewFactory::class)->composer(
+            views: self::ASSET_VIEWS,
+            callback: function (View $view): void {
+                $assets = $this->app->make(AssetUrlGenerator::class);
+
+                $view->with(key: 'stylesheetUrl', value: $assets->url(Asset::Css));
+                $view->with(key: 'scriptUrl', value: $assets->url(Asset::Js));
+            },
         );
     }
 

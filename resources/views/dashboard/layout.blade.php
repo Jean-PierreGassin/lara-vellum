@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', __('lara-vellum::vellum.dashboard.title'))</title>
-    <link rel="stylesheet" href="{{ route('lara-vellum.assets.css') }}">
+    <link rel="stylesheet" href="{{ $stylesheetUrl }}">
 </head>
 <body class="min-h-full bg-stone-100 text-stone-800 antialiased dark:bg-stone-950 dark:text-stone-200">
     <div class="mx-auto max-w-4xl px-6">
@@ -33,6 +33,6 @@
         </main>
     </div>
 
-    <script src="{{ route('lara-vellum.assets.js') }}" defer></script>
+    <script src="{{ $scriptUrl }}" defer></script>
 </body>
 </html>
