@@ -5,7 +5,7 @@ Laravel meets Vellum: the art of writing, as a Laravel package.
 ## Requirements
 
 - PHP 8.3+
-- Laravel 11 or 12
+- Laravel 12
 
 ## Installation
 

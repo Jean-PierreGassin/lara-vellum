@@ -16,8 +16,6 @@ REPO="${1:-$(gh repo view --json nameWithOwner -q .nameWithOwner)}"
 
 # Status check contexts, exactly as they appear on a PR's checks tab.
 CHECKS='[
-  {"context":"PHP 8.3 - Laravel 11.*"},
-  {"context":"PHP 8.4 - Laravel 11.*"},
   {"context":"PHP 8.3 - Laravel 12.*"},
   {"context":"PHP 8.4 - Laravel 12.*"},
   {"context":"Coding standards (PER-CS)"},
