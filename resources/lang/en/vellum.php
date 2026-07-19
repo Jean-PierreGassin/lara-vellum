@@ -3,6 +3,7 @@
 return [
 
     'saved' => 'Draft saved.',
+    'updated' => 'Post updated.',
     'published' => 'Post published.',
     'unpublished' => 'Post moved back to draft.',
     'deleted' => 'Post deleted.',
@@ -24,7 +25,8 @@ return [
         'body_placeholder' => 'Write in Markdown...',
         'write' => 'Write',
         'preview' => 'Preview',
-        'save' => 'Save draft',
+        'save' => 'Save',
+        'save_draft' => 'Save draft',
         'publish' => 'Publish',
         'unpublish' => 'Unpublish',
         'delete' => 'Delete',

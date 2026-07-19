@@ -50,19 +50,23 @@ readonly class DashboardPostController
 
     public function edit(Post $post): View
     {
+        $saveKey = $post->isPublished() ? 'save' : 'save_draft';
+
         return $this->view->make(view: 'lara-vellum::dashboard.edit', data: [
             'post' => $post,
             'publicUrl' => $this->urls->forSlug($post->slug),
+            'saveLabel' => __("lara-vellum::vellum.editor.$saveKey"),
         ]);
     }
 
     public function update(SavePostRequest $request, Post $post): RedirectResponse
     {
-        $this->posts->update(post: $post, payload: $request->toPayload());
+        $post = $this->posts->update(post: $post, payload: $request->toPayload());
+        $statusKey = $post->isPublished() ? 'updated' : 'saved';
 
         return redirect()
             ->route(route: 'lara-vellum.dashboard.edit', parameters: $post)
-            ->with(key: 'status', value: __('lara-vellum::vellum.saved'));
+            ->with(key: 'status', value: __("lara-vellum::vellum.$statusKey"));
     }
 
     public function publish(Post $post): RedirectResponse

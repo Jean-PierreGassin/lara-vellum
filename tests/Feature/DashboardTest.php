@@ -63,6 +63,43 @@ it('renders the editor for a published post with a link to the public page', fun
         ->assertSee(url($post->slug));
 });
 
+it('offers a draft save on a draft', function () {
+    $post = Post::create(['title' => 'Editable', 'body' => '# Body', 'status' => PostStatus::Draft]);
+
+    actingAs(vellumUser());
+
+    get("/vellum/$post->id/edit")->assertSee('Save draft');
+});
+
+it('offers a plain save, not a draft save, on a published post', function () {
+    $post = Post::create([
+        'title' => 'Editable',
+        'body' => '# Body',
+        'status' => PostStatus::Published,
+        'published_at' => Carbon::now()->subDay(),
+    ]);
+
+    actingAs(vellumUser());
+
+    get("/vellum/$post->id/edit")
+        ->assertSee('Save')
+        ->assertDontSee('Save draft');
+});
+
+it('reports a published post as updated rather than saved as a draft', function () {
+    $post = Post::create([
+        'title' => 'Live One',
+        'body' => '# Live',
+        'status' => PostStatus::Published,
+        'published_at' => Carbon::now()->subDay(),
+    ]);
+
+    actingAs(vellumUser());
+
+    put("/vellum/$post->id", ['title' => 'Live One', 'body' => '# Edited'])
+        ->assertSessionHas('status', 'Post updated.');
+});
+
 it('publishes a draft and writes its static page', function () {
     $post = Post::create(['title' => 'To Publish', 'body' => '# Ready', 'status' => PostStatus::Draft]);
 
