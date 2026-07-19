@@ -26,7 +26,7 @@ readonly class StaticPageGenerator
         $path = $this->pathFor($hash);
 
         $this->pruneStaleFile($post, $hash);
-        $this->disk()->put($path, $html);
+        $this->disk()->put(path: $path, contents: $html);
 
         return new GeneratedPage(
             hash: $hash,
@@ -56,16 +56,16 @@ readonly class StaticPageGenerator
 
     public function pathFor(string $hash): string
     {
-        $directory = trim($this->config->get('lara-vellum.static.path', 'vellum/pages'), '/');
+        $directory = trim($this->config->get(key: 'lara-vellum.static.path', default: 'vellum/pages'), '/');
 
         return "$directory/$hash.html";
     }
 
     private function renderPage(Post $post): string
     {
-        $view = $this->config->get('lara-vellum.views.public_show', 'lara-vellum::public.show');
+        $view = $this->config->get(key: 'lara-vellum.views.public_show', default: 'lara-vellum::public.show');
 
-        return $this->view->make($view, [
+        return $this->view->make(view: $view, data: [
             'post' => $post,
             'content' => $this->renderer->toHtml($post->body),
         ])->render();
@@ -87,6 +87,6 @@ readonly class StaticPageGenerator
 
     private function disk(): Filesystem
     {
-        return $this->filesystem->disk($this->config->get('lara-vellum.static.disk', 'local'));
+        return $this->filesystem->disk($this->config->get(key: 'lara-vellum.static.disk', default: 'local'));
     }
 }

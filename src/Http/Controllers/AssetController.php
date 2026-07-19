@@ -7,20 +7,24 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 readonly class AssetController
 {
-    private const string STYLESHEET = __DIR__.'/../../../resources/dist/vellum.css';
-
-    private const string SCRIPT = __DIR__.'/../../../resources/dist/vellum.js';
-
-    private const int CACHE_SECONDS = 31536000;
+    private const string ASSET_DIR = 'resources/dist';
+    private const string STYLESHEET = 'vellum.css';
+    private const string SCRIPT = 'vellum.js';
+    private const int CACHE_SECONDS = 365 * 24 * 60 * 60; // one year
 
     public function css(): BinaryFileResponse
     {
-        return $this->serve(self::STYLESHEET, 'text/css');
+        return $this->serve($this->assetPath(self::STYLESHEET), 'text/css');
     }
 
     public function js(): BinaryFileResponse
     {
-        return $this->serve(self::SCRIPT, 'text/javascript');
+        return $this->serve($this->assetPath(self::SCRIPT), 'text/javascript');
+    }
+
+    private function assetPath(string $file): string
+    {
+        return dirname(__DIR__, 3).'/'.self::ASSET_DIR.'/'.$file;
     }
 
     private function serve(string $path, string $contentType): BinaryFileResponse

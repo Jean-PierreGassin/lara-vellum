@@ -12,20 +12,16 @@ use JeanPierreGassin\LaraVellum\Support\StaticPageGenerator;
 
 class LaraVellumServiceProvider extends ServiceProvider
 {
-    private const string CONFIG_PATH = __DIR__.'/../config/lara-vellum.php';
-
-    private const string VIEWS_PATH = __DIR__.'/../resources/views';
-
-    private const string LANG_PATH = __DIR__.'/../resources/lang';
-
-    private const string MIGRATIONS_PATH = __DIR__.'/../database/migrations';
-
+    private const string CONFIG_FILE = 'config/lara-vellum.php';
+    private const string VIEWS_DIR = 'resources/views';
+    private const string LANG_DIR = 'resources/lang';
+    private const string MIGRATIONS_DIR = 'database/migrations';
     private const string VIEW_NAMESPACE = 'lara-vellum';
 
     public function register(): void
     {
         $this->mergeConfigFrom(
-            path: self::CONFIG_PATH,
+            path: $this->packagePath(self::CONFIG_FILE),
             key: 'lara-vellum',
         );
 
@@ -41,16 +37,16 @@ class LaraVellumServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(
-            path: self::VIEWS_PATH,
+            path: $this->packagePath(self::VIEWS_DIR),
             namespace: self::VIEW_NAMESPACE,
         );
 
         $this->loadTranslationsFrom(
-            path: self::LANG_PATH,
+            path: $this->packagePath(self::LANG_DIR),
             namespace: self::VIEW_NAMESPACE,
         );
 
-        $this->loadMigrationsFrom(paths: self::MIGRATIONS_PATH);
+        $this->loadMigrationsFrom(paths: $this->packagePath(self::MIGRATIONS_DIR));
 
         $this->registerDefaultGate();
         $this->registerRoutes();
@@ -62,7 +58,7 @@ class LaraVellumServiceProvider extends ServiceProvider
 
     private function registerRoutes(): void
     {
-        if (!$this->app->make('config')->get('lara-vellum.enabled', true)) {
+        if (!$this->app->make('config')->get(key: 'lara-vellum.enabled', default: true)) {
             return;
         }
 
@@ -90,30 +86,35 @@ class LaraVellumServiceProvider extends ServiceProvider
     {
         $this->publishes(
             paths: [
-                self::CONFIG_PATH => $this->app->configPath(path: 'lara-vellum.php'),
+                $this->packagePath(self::CONFIG_FILE) => $this->app->configPath(path: 'lara-vellum.php'),
             ],
             groups: 'lara-vellum-config',
         );
 
         $this->publishes(
             paths: [
-                self::VIEWS_PATH => $this->app->resourcePath(path: 'views/vendor/lara-vellum'),
+                $this->packagePath(self::VIEWS_DIR) => $this->app->resourcePath(path: 'views/vendor/lara-vellum'),
             ],
             groups: 'lara-vellum-views',
         );
 
         $this->publishes(
             paths: [
-                self::MIGRATIONS_PATH => $this->app->databasePath(path: 'migrations'),
+                $this->packagePath(self::MIGRATIONS_DIR) => $this->app->databasePath(path: 'migrations'),
             ],
             groups: 'lara-vellum-migrations',
         );
 
         $this->publishes(
             paths: [
-                self::LANG_PATH => $this->app->langPath(path: 'vendor/lara-vellum'),
+                $this->packagePath(self::LANG_DIR) => $this->app->langPath(path: 'vendor/lara-vellum'),
             ],
             groups: 'lara-vellum-lang',
         );
+    }
+
+    private function packagePath(string $relative): string
+    {
+        return dirname(__DIR__).'/'.$relative;
     }
 }

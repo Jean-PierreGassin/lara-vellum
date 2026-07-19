@@ -16,7 +16,7 @@
             </button>
 
             @if ($post->isPublished())
-                <a href="{{ route('lara-vellum.posts.show', ['slug' => $post->slug]) }}"
+                <a href="{{ $publicUrl }}"
                    class="text-sm text-stone-500 hover:text-stone-800 dark:hover:text-stone-200">
                     {{ __('lara-vellum::vellum.dashboard.view') }}
                 </a>

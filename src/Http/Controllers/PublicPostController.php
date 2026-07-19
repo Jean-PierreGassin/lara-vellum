@@ -21,7 +21,7 @@ readonly class PublicPostController
         $post = $this->posts->findPublishedBySlug($slug);
 
         if ($post === null) {
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND);
         }
 
         return new Response(

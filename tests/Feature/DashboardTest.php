@@ -48,6 +48,21 @@ it('stores a new draft and redirects to its editor', function () {
         ->and($post->author_id)->toBe(1);
 });
 
+it('renders the editor for a published post with a link to the public page', function () {
+    $post = Post::create([
+        'title' => 'Live Article',
+        'body' => '# Live',
+        'status' => PostStatus::Published,
+        'published_at' => Carbon::now()->subDay(),
+    ]);
+
+    actingAs(vellumUser());
+
+    get("/vellum/$post->id/edit")
+        ->assertOk()
+        ->assertSee(url($post->slug));
+});
+
 it('publishes a draft and writes its static page', function () {
     $post = Post::create(['title' => 'To Publish', 'body' => '# Ready', 'status' => PostStatus::Draft]);
 

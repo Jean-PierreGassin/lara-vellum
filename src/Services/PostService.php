@@ -16,12 +16,12 @@ readonly class PostService
 
     public function create(SavePostPayload $payload, ?int $authorId): Post
     {
-        return $this->posts->create($payload, $authorId);
+        return $this->posts->create(payload: $payload, authorId: $authorId);
     }
 
     public function update(Post $post, SavePostPayload $payload): Post
     {
-        $post = $this->posts->update($post, $payload);
+        $post = $this->posts->update(post: $post, payload: $payload);
 
         if ($post->isPublished()) {
             return $this->regenerate($post);
@@ -62,6 +62,6 @@ readonly class PostService
     {
         $generated = $this->generator->generate($post);
 
-        return $this->posts->markPublished($post, $generated->hash);
+        return $this->posts->markPublished(post: $post, contentHash: $generated->hash);
     }
 }

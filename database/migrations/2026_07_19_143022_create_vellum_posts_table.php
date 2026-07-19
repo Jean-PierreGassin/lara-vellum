@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use JeanPierreGassin\LaraVellum\Enums\PostStatus;
 
 return new class extends Migration
 {
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->text('excerpt')->nullable();
             $table->longText('body');
 
-            $table->string('status')->default('draft')->index();
+            $table->string('status')->default(PostStatus::Draft->value)->index();
             $table->string('content_hash')->nullable();
             $table->timestamp('published_at')->nullable()->index();
 

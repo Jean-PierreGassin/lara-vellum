@@ -12,6 +12,7 @@ use JeanPierreGassin\LaraVellum\Http\Requests\SavePostRequest;
 use JeanPierreGassin\LaraVellum\Models\Post;
 use JeanPierreGassin\LaraVellum\Repositories\PostRepository;
 use JeanPierreGassin\LaraVellum\Services\PostService;
+use JeanPierreGassin\LaraVellum\Support\PostUrlGenerator;
 
 readonly class DashboardPostController
 {
@@ -19,19 +20,20 @@ readonly class DashboardPostController
         private PostService $posts,
         private PostRepository $repository,
         private MarkdownRenderer $renderer,
+        private PostUrlGenerator $urls,
         private ViewFactory $view,
     ) {}
 
     public function index(): View
     {
-        return $this->view->make('lara-vellum::dashboard.index', [
+        return $this->view->make(view: 'lara-vellum::dashboard.index', data: [
             'posts' => $this->repository->paginateForDashboard(),
         ]);
     }
 
     public function create(): View
     {
-        return $this->view->make('lara-vellum::dashboard.create');
+        return $this->view->make(view: 'lara-vellum::dashboard.create');
     }
 
     public function store(SavePostRequest $request): RedirectResponse
@@ -42,24 +44,25 @@ readonly class DashboardPostController
         );
 
         return redirect()
-            ->route('lara-vellum.dashboard.edit', $post)
-            ->with('status', __('lara-vellum::vellum.saved'));
+            ->route(route: 'lara-vellum.dashboard.edit', parameters: $post)
+            ->with(key: 'status', value: __('lara-vellum::vellum.saved'));
     }
 
     public function edit(Post $post): View
     {
-        return $this->view->make('lara-vellum::dashboard.edit', [
+        return $this->view->make(view: 'lara-vellum::dashboard.edit', data: [
             'post' => $post,
+            'publicUrl' => $this->urls->forSlug($post->slug),
         ]);
     }
 
     public function update(SavePostRequest $request, Post $post): RedirectResponse
     {
-        $this->posts->update($post, $request->toPayload());
+        $this->posts->update(post: $post, payload: $request->toPayload());
 
         return redirect()
-            ->route('lara-vellum.dashboard.edit', $post)
-            ->with('status', __('lara-vellum::vellum.saved'));
+            ->route(route: 'lara-vellum.dashboard.edit', parameters: $post)
+            ->with(key: 'status', value: __('lara-vellum::vellum.saved'));
     }
 
     public function publish(Post $post): RedirectResponse
@@ -67,8 +70,8 @@ readonly class DashboardPostController
         $this->posts->publish($post);
 
         return redirect()
-            ->route('lara-vellum.dashboard.edit', $post)
-            ->with('status', __('lara-vellum::vellum.published'));
+            ->route(route: 'lara-vellum.dashboard.edit', parameters: $post)
+            ->with(key: 'status', value: __('lara-vellum::vellum.published'));
     }
 
     public function unpublish(Post $post): RedirectResponse
@@ -76,8 +79,8 @@ readonly class DashboardPostController
         $this->posts->unpublish($post);
 
         return redirect()
-            ->route('lara-vellum.dashboard.edit', $post)
-            ->with('status', __('lara-vellum::vellum.unpublished'));
+            ->route(route: 'lara-vellum.dashboard.edit', parameters: $post)
+            ->with(key: 'status', value: __('lara-vellum::vellum.unpublished'));
     }
 
     public function destroy(Post $post): RedirectResponse
@@ -85,8 +88,8 @@ readonly class DashboardPostController
         $this->posts->delete($post);
 
         return redirect()
-            ->route('lara-vellum.dashboard.index')
-            ->with('status', __('lara-vellum::vellum.deleted'));
+            ->route(route: 'lara-vellum.dashboard.index')
+            ->with(key: 'status', value: __('lara-vellum::vellum.deleted'));
     }
 
     public function preview(Request $request): Response

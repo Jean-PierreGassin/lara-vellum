@@ -27,12 +27,12 @@ readonly class RouteRegistrar
     private function registerAssets(): void
     {
         $this->router
-            ->get($this->dashboardPath('assets/app.css'), [AssetController::class, 'css'])
+            ->get(uri: $this->dashboardPath('assets/app.css'), action: [AssetController::class, 'css'])
             ->middleware($this->publicMiddleware())
             ->name('lara-vellum.assets.css');
 
         $this->router
-            ->get($this->dashboardPath('assets/app.js'), [AssetController::class, 'js'])
+            ->get(uri: $this->dashboardPath('assets/app.js'), action: [AssetController::class, 'js'])
             ->middleware($this->publicMiddleware())
             ->name('lara-vellum.assets.js');
     }
@@ -40,21 +40,21 @@ readonly class RouteRegistrar
     private function registerDashboard(): void
     {
         $this->dashboardGroup()->group(function () {
-            $this->router->get('/', [DashboardPostController::class, 'index'])->name('index');
-            $this->router->get('create', [DashboardPostController::class, 'create'])->name('create');
-            $this->router->post('/', [DashboardPostController::class, 'store'])->name('store');
-            $this->router->post('preview', [DashboardPostController::class, 'preview'])->name('preview');
-            $this->router->get('{post}/edit', [DashboardPostController::class, 'edit'])->name('edit');
-            $this->router->put('{post}', [DashboardPostController::class, 'update'])->name('update');
-            $this->router->post('{post}/publish', [DashboardPostController::class, 'publish'])->name('publish');
-            $this->router->post('{post}/unpublish', [DashboardPostController::class, 'unpublish'])->name('unpublish');
-            $this->router->delete('{post}', [DashboardPostController::class, 'destroy'])->name('destroy');
+            $this->router->get(uri: '/', action: [DashboardPostController::class, 'index'])->name('index');
+            $this->router->get(uri: 'create', action: [DashboardPostController::class, 'create'])->name('create');
+            $this->router->post(uri: '/', action: [DashboardPostController::class, 'store'])->name('store');
+            $this->router->post(uri: 'preview', action: [DashboardPostController::class, 'preview'])->name('preview');
+            $this->router->get(uri: '{post}/edit', action: [DashboardPostController::class, 'edit'])->name('edit');
+            $this->router->put(uri: '{post}', action: [DashboardPostController::class, 'update'])->name('update');
+            $this->router->post(uri: '{post}/publish', action: [DashboardPostController::class, 'publish'])->name('publish');
+            $this->router->post(uri: '{post}/unpublish', action: [DashboardPostController::class, 'unpublish'])->name('unpublish');
+            $this->router->delete(uri: '{post}', action: [DashboardPostController::class, 'destroy'])->name('destroy');
         });
     }
 
     private function registerPublic(): void
     {
-        $prefix = trim((string) $this->config->get('lara-vellum.routing.public.prefix', ''), '/');
+        $prefix = trim((string) $this->config->get(key: 'lara-vellum.routing.public.prefix', default: ''), '/');
         $middleware = $this->publicMiddleware();
 
         if ($prefix === '') {
@@ -67,9 +67,9 @@ readonly class RouteRegistrar
         }
 
         $this->router
-            ->get("$prefix/{slug}", [PublicPostController::class, 'show'])
+            ->get(uri: "$prefix/{slug}", action: [PublicPostController::class, 'show'])
             ->middleware($middleware)
-            ->where('slug', '[A-Za-z0-9\-]+')
+            ->where(name: 'slug', expression: '[A-Za-z0-9\-]+')
             ->name('lara-vellum.posts.show');
     }
 
@@ -86,7 +86,7 @@ readonly class RouteRegistrar
      */
     private function publicMiddleware(): array
     {
-        return (array) $this->config->get('lara-vellum.routing.public.middleware', ['web']);
+        return (array) $this->config->get(key: 'lara-vellum.routing.public.middleware', default: ['web']);
     }
 
     /**
@@ -94,12 +94,12 @@ readonly class RouteRegistrar
      */
     private function dashboardMiddleware(): array
     {
-        return (array) $this->config->get('lara-vellum.routing.dashboard.middleware', ['web']);
+        return (array) $this->config->get(key: 'lara-vellum.routing.dashboard.middleware', default: ['web']);
     }
 
     private function dashboardPrefix(): string
     {
-        return trim((string) $this->config->get('lara-vellum.routing.dashboard.prefix', 'vellum'), '/');
+        return trim((string) $this->config->get(key: 'lara-vellum.routing.dashboard.prefix', default: 'vellum'), '/');
     }
 
     private function dashboardPath(string $path): string
