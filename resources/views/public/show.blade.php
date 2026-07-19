@@ -1,24 +1,31 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $post->title }}</title>
-    @if ($post->excerpt)
-        <meta name="description" content="{{ $post->excerpt }}">
-    @endif
-</head>
-<body>
-    <main>
-        <article>
-            <h1>{{ $post->title }}</h1>
+@extends('lara-vellum::public.layout')
+
+@section('title', $post->title)
+
+@if ($post->excerpt)
+    @section('description', $post->excerpt)
+@endif
+
+@section('content')
+    <article>
+        <header class="mb-10">
+            <h1 class="text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
+                {{ $post->title }}
+            </h1>
             @if ($post->published_at)
-                <time datetime="{{ $post->published_at->toIso8601String() }}">
+                <time datetime="{{ $post->published_at->toIso8601String() }}"
+                      class="mt-4 block text-sm text-stone-400">
                     {{ $post->published_at->toFormattedDateString() }}
                 </time>
             @endif
+        </header>
+
+        <div class="vellum-prose">
             {!! $content !!}
-        </article>
-    </main>
-</body>
-</html>
+        </div>
+    </article>
+@endsection
+
+@section('footer')
+    {{ $post->published_at?->format('Y') }}
+@endsection

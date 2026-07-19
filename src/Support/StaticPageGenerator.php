@@ -43,6 +43,17 @@ readonly class StaticPageGenerator
         $this->disk()->delete($this->pathFor($post->content_hash));
     }
 
+    public function exists(Post $post): bool
+    {
+        return $post->content_hash !== null
+            && $this->disk()->exists($this->pathFor($post->content_hash));
+    }
+
+    public function read(Post $post): string
+    {
+        return (string) $this->disk()->get($this->pathFor((string) $post->content_hash));
+    }
+
     public function pathFor(string $hash): string
     {
         $directory = trim($this->config->get('lara-vellum.static.path', 'vellum/pages'), '/');
