@@ -10,9 +10,12 @@ class LaraVellumServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(self::CONFIG_PATH, 'lara-vellum');
+        $this->mergeConfigFrom(
+            path: self::CONFIG_PATH,
+            key: 'lara-vellum',
+        );
 
-        $this->app->singleton(LaraVellum::class);
+        $this->app->singleton(abstract: LaraVellum::class);
     }
 
     public function boot(): void
@@ -21,8 +24,11 @@ class LaraVellumServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->publishes([
-            self::CONFIG_PATH => $this->app->configPath('lara-vellum.php'),
-        ], 'lara-vellum-config');
+        $this->publishes(
+            paths: [
+                self::CONFIG_PATH => $this->app->configPath(path: 'lara-vellum.php'),
+            ],
+            groups: 'lara-vellum-config',
+        );
     }
 }

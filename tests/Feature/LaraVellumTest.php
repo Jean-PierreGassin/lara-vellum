@@ -12,7 +12,10 @@ it('is enabled by default', function () {
 });
 
 it('reflects the enabled config flag', function () {
-    config()->set('lara-vellum.enabled', false);
+    config()->set(
+        key: 'lara-vellum.enabled',
+        value: false,
+    );
 
     expect(LaraVellum::isEnabled())->toBeFalse();
 });
