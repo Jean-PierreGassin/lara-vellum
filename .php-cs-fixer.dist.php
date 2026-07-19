@@ -18,19 +18,13 @@ return (new PhpCsFixer\Config())
         'no_unused_imports' => true,
         'ordered_imports' => [
             'sort_algorithm' => 'alpha',
+            'imports_order' => ['class', 'function', 'const'],
         ],
         'not_operator_with_successor_space' => false,
         'concat_space' => [
             'spacing' => 'none',
         ],
         'single_quote' => true,
-        'trailing_comma_in_multiline' => [
-            'elements' => [
-                'arrays',
-                'arguments',
-                'parameters',
-            ],
-        ],
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(false);
