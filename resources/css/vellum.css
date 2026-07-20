@@ -1,6 +1,189 @@
 @import "tailwindcss";
 
 @source "../views";
+@source "../js";
+
+/*
+ * Dark mode follows the reader's system preference by default, and the
+ * dashboard can override it explicitly. Public pages carry no script, so they
+ * simply track the media query.
+ */
+@custom-variant dark {
+    @media (prefers-color-scheme: dark) {
+        &:where(html:not([data-vellum-theme="light"]), html:not([data-vellum-theme="light"]) *) {
+            @slot;
+        }
+    }
+
+    &:where(html[data-vellum-theme="dark"], html[data-vellum-theme="dark"] *) {
+        @slot;
+    }
+}
+
+@theme {
+    --font-vellum-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-vellum-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+    --font-vellum-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@layer base {
+    html {
+        font-family: var(--font-vellum-sans);
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /*
+     * Every interactive element keeps a visible keyboard affordance. Views drop
+     * the default outline for aesthetics, but never the ring underneath.
+     */
+    :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-stone-900);
+        outline-offset: 2px;
+        border-radius: 0.25rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+            outline-color: var(--color-stone-100);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
+
+@layer components {
+    /* Buttons ------------------------------------------------------------ */
+
+    .vellum-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-150 select-none;
+    }
+
+    .vellum-btn-primary {
+        @apply bg-stone-900 text-white shadow-sm hover:bg-stone-700 active:bg-stone-800;
+        @apply dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white;
+    }
+
+    .vellum-btn-secondary {
+        @apply border border-stone-300 bg-white text-stone-700 shadow-sm hover:border-stone-400 hover:text-stone-900;
+        @apply dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 dark:hover:border-stone-600 dark:hover:text-stone-100;
+    }
+
+    .vellum-btn-ghost {
+        @apply text-stone-500 hover:bg-stone-200/60 hover:text-stone-900;
+        @apply dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-100;
+    }
+
+    .vellum-btn-success {
+        @apply bg-emerald-600 text-white shadow-sm hover:bg-emerald-500 active:bg-emerald-700;
+    }
+
+    .vellum-btn-danger {
+        @apply text-red-600 hover:bg-red-50 hover:text-red-700;
+        @apply dark:text-red-400 dark:hover:bg-red-950/60 dark:hover:text-red-300;
+    }
+
+    .vellum-btn-danger-solid {
+        @apply bg-red-600 text-white shadow-sm hover:bg-red-500 active:bg-red-700;
+    }
+
+    .vellum-icon {
+        @apply size-4 shrink-0;
+    }
+
+    /* Hides the disclosure triangle so <details> can carry a button. */
+    .vellum-summary-button {
+        @apply cursor-pointer list-none;
+    }
+
+    .vellum-summary-button::-webkit-details-marker {
+        display: none;
+    }
+
+    /* Surfaces ----------------------------------------------------------- */
+
+    .vellum-card {
+        @apply rounded-xl border border-stone-200 bg-white shadow-sm transition duration-150;
+        @apply dark:border-stone-800 dark:bg-stone-900;
+    }
+
+    .vellum-card-interactive {
+        @apply hover:-translate-y-px hover:border-stone-300 hover:shadow-md;
+        @apply dark:hover:border-stone-700;
+    }
+
+    /* Badges ------------------------------------------------------------- */
+
+    .vellum-badge {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+    }
+
+    .vellum-badge-published {
+        @apply bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20 ring-inset;
+        @apply dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/20;
+    }
+
+    .vellum-badge-draft {
+        @apply bg-stone-100 text-stone-600 ring-1 ring-stone-500/20 ring-inset;
+        @apply dark:bg-stone-800 dark:text-stone-300 dark:ring-stone-400/20;
+    }
+
+    .vellum-dot {
+        @apply size-1.5 rounded-full bg-current;
+    }
+
+    /* Navigation --------------------------------------------------------- */
+
+    .vellum-nav-link {
+        @apply rounded-lg px-3 py-1.5 text-sm font-medium text-stone-500 transition-colors duration-150;
+        @apply hover:bg-stone-200/60 hover:text-stone-900;
+        @apply dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-100;
+    }
+
+    .vellum-nav-link-active {
+        @apply bg-stone-900 text-white hover:bg-stone-900 hover:text-white;
+        @apply dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-stone-100 dark:hover:text-stone-900;
+    }
+
+    .vellum-tab {
+        @apply -mb-px border-b-2 border-transparent px-3 py-2 text-sm font-medium text-stone-400 transition-colors duration-150;
+        @apply hover:text-stone-700 dark:hover:text-stone-200;
+    }
+
+    .vellum-tab-active {
+        @apply border-stone-900 text-stone-900 dark:border-stone-100 dark:text-stone-100;
+    }
+
+    /* Forms -------------------------------------------------------------- */
+
+    .vellum-input {
+        @apply w-full bg-transparent placeholder-stone-400 focus:outline-none dark:placeholder-stone-600;
+    }
+
+    .vellum-meta {
+        @apply text-sm text-stone-500 dark:text-stone-400;
+    }
+
+    .vellum-error {
+        @apply mt-2 text-sm text-red-600 dark:text-red-400;
+    }
+
+    /* Utilities ---------------------------------------------------------- */
+
+    .vellum-skip-link {
+        @apply sr-only rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white;
+        @apply focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50;
+        @apply dark:bg-stone-100 dark:text-stone-900;
+    }
+}
 
 /*
  * Typographic styles for rendered post content (the .vellum-prose wrapper).
@@ -11,6 +194,7 @@
     .vellum-prose {
         line-height: 1.75;
         color: var(--color-stone-700);
+        overflow-wrap: break-word;
     }
 
     .vellum-prose > * + * {
@@ -23,9 +207,11 @@
     .vellum-prose h4 {
         color: var(--color-stone-900);
         font-weight: 600;
+        letter-spacing: -0.015em;
         line-height: 1.25;
         margin-top: 2em;
         margin-bottom: 0.75em;
+        scroll-margin-top: 5rem;
     }
 
     .vellum-prose h1 { font-size: 1.875rem; }
@@ -35,7 +221,13 @@
     .vellum-prose a {
         color: var(--color-stone-900);
         text-decoration: underline;
-        text-underline-offset: 2px;
+        text-decoration-color: var(--color-stone-400);
+        text-underline-offset: 3px;
+        transition: text-decoration-color 150ms;
+    }
+
+    .vellum-prose a:hover {
+        text-decoration-color: currentColor;
     }
 
     .vellum-prose strong { color: var(--color-stone-900); font-weight: 600; }
@@ -60,28 +252,52 @@
         background: var(--color-stone-100);
         border-radius: 0.25rem;
         padding: 0.15em 0.35em;
+        font-family: var(--font-vellum-mono);
         font-size: 0.875em;
     }
 
     .vellum-prose pre {
         background: var(--color-stone-900);
         color: var(--color-stone-100);
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
         padding: 1em 1.25em;
         overflow-x: auto;
+        font-size: 0.875rem;
+        line-height: 1.7;
     }
 
     .vellum-prose pre code {
         background: transparent;
         padding: 0;
-        font-size: 0.875em;
+        font-size: inherit;
         color: inherit;
     }
 
     .vellum-prose img {
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
         max-width: 100%;
         height: auto;
+    }
+
+    .vellum-prose table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+        font-size: 0.9375em;
+    }
+
+    .vellum-prose th,
+    .vellum-prose td {
+        border: 1px solid var(--color-stone-200);
+        padding: 0.5em 0.75em;
+        text-align: left;
+    }
+
+    .vellum-prose th {
+        background: var(--color-stone-50);
+        font-weight: 600;
+        color: var(--color-stone-900);
     }
 
     .vellum-prose hr {
@@ -97,7 +313,12 @@
     .vellum-prose h4,
     .vellum-prose a,
     .vellum-prose strong { color: var(--color-stone-100); }
+    .vellum-prose a { text-decoration-color: var(--color-stone-600); }
     .vellum-prose blockquote { color: var(--color-stone-400); border-left-color: var(--color-stone-700); }
     .vellum-prose code { background: var(--color-stone-800); }
+    .vellum-prose pre { background: var(--color-stone-950); border: 1px solid var(--color-stone-800); }
+    .vellum-prose th,
+    .vellum-prose td { border-color: var(--color-stone-800); }
+    .vellum-prose th { background: var(--color-stone-900); color: var(--color-stone-100); }
     .vellum-prose hr { border-color: var(--color-stone-800); }
 }

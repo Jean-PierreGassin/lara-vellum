@@ -171,3 +171,49 @@ it('validates that a title and body are required', function () {
     post('/vellum', ['title' => '', 'body' => ''])
         ->assertSessionHasErrors(['title', 'body']);
 });
+
+it('lists only the requested status when the dashboard is filtered', function () {
+    Post::create(['title' => 'Draft One', 'body' => 'x', 'status' => PostStatus::Draft]);
+    Post::create([
+        'title' => 'Live One',
+        'body' => 'x',
+        'status' => PostStatus::Published,
+        'published_at' => Carbon::now()->subDay(),
+    ]);
+
+    actingAs(vellumUser());
+
+    get('/vellum?status=draft')
+        ->assertOk()
+        ->assertSee('Draft One')
+        ->assertDontSee('Live One');
+});
+
+it('falls back to every post when the status filter is not a real status', function () {
+    Post::create(['title' => 'Draft One', 'body' => 'x', 'status' => PostStatus::Draft]);
+
+    actingAs(vellumUser());
+
+    get('/vellum?status=nonsense')
+        ->assertOk()
+        ->assertSee('Draft One');
+});
+
+it('explains the empty result rather than the empty library when a filter matches nothing', function () {
+    Post::create(['title' => 'Draft One', 'body' => 'x', 'status' => PostStatus::Draft]);
+
+    actingAs(vellumUser());
+
+    get('/vellum?status=published')
+        ->assertOk()
+        ->assertSee('Nothing published yet.')
+        ->assertDontSee('Nothing written yet.');
+});
+
+it('renders the new post screen', function () {
+    actingAs(vellumUser());
+
+    get('/vellum/create')
+        ->assertOk()
+        ->assertSee('Save draft');
+});
