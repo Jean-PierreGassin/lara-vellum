@@ -8,14 +8,18 @@
 
         @include('lara-vellum::dashboard._editor')
 
-        <div class="mt-8 flex items-center gap-3">
-            <button type="submit"
-                    class="rounded-md bg-stone-900 px-4 py-2 text-sm font-medium text-white hover:bg-stone-700 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white">
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+            <button type="submit" class="vellum-btn vellum-btn-primary">
                 {{ __('lara-vellum::vellum.editor.save_draft') }}
             </button>
-            <a href="{{ route('lara-vellum.dashboard.index') }}" class="text-sm text-stone-400 hover:text-stone-600">
+
+            <a href="{{ route('lara-vellum.dashboard.index') }}" class="vellum-btn vellum-btn-ghost">
                 {{ __('lara-vellum::vellum.editor.back') }}
             </a>
+
+            <p class="ms-auto text-xs text-stone-500 dark:text-stone-400">
+                {{ __('lara-vellum::vellum.editor.draft_hint') }}
+            </p>
         </div>
     </form>
 @endsection

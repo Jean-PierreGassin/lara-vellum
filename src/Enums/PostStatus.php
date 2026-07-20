@@ -9,10 +9,7 @@ enum PostStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Draft => 'Draft',
-            self::Published => 'Published',
-        };
+        return (string) __("lara-vellum::vellum.status.$this->value");
     }
 
     public function isPublished(): bool

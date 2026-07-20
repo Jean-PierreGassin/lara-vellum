@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JeanPierreGassin\LaraVellum\Contracts\MarkdownRenderer;
+use JeanPierreGassin\LaraVellum\Enums\PostStatus;
 use JeanPierreGassin\LaraVellum\Http\Requests\SavePostRequest;
 use JeanPierreGassin\LaraVellum\Models\Post;
 use JeanPierreGassin\LaraVellum\Repositories\PostRepository;
@@ -24,10 +25,15 @@ readonly class DashboardPostController
         private ViewFactory $view,
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $filter = PostStatus::tryFrom((string) $request->input('status', ''));
+
         return $this->view->make(view: 'lara-vellum::dashboard.index', data: [
-            'posts' => $this->repository->paginateForDashboard(),
+            'posts' => $this->repository->paginateForDashboard($filter),
+            'counts' => $this->repository->countsByStatus(),
+            'statuses' => PostStatus::cases(),
+            'filter' => $filter,
         ]);
     }
 
