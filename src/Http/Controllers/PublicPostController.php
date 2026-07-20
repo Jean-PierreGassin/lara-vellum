@@ -2,7 +2,6 @@
 
 namespace JeanPierreGassin\LaraVellum\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JeanPierreGassin\LaraVellum\Repositories\PostRepository;
 use JeanPierreGassin\LaraVellum\Services\PostService;
@@ -14,10 +13,8 @@ readonly class PublicPostController
         private PostService $service,
     ) {}
 
-    public function show(Request $request, ?string $slug = null): Response
+    public function show(string $slug): Response
     {
-        $slug ??= trim($request->path(), '/');
-
         $post = $this->posts->findPublishedBySlug($slug);
 
         if ($post === null) {

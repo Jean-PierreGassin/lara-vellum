@@ -60,7 +60,7 @@ it('renders the editor for a published post with a link to the public page', fun
 
     get("/vellum/$post->id/edit")
         ->assertOk()
-        ->assertSee(url($post->slug));
+        ->assertSee(url("posts/$post->slug"));
 });
 
 it('offers a draft save on a draft', function () {

@@ -12,6 +12,12 @@ use JeanPierreGassin\LaraVellum\Http\Middleware\Authorize;
 
 readonly class RouteRegistrar
 {
+    private const string DEFAULT_PUBLIC_PREFIX = 'posts';
+    private const string SLUG_PATTERN = '[A-Za-z0-9\-]+';
+    // Whitespace as well as slashes, so a blank configured prefix cannot
+    // produce a route URI the host application can never match.
+    private const string PREFIX_TRIM_CHARACTERS = " \t\n\r\0\x0B/";
+
     public function __construct(
         private Router $router,
         private Repository $config,
@@ -54,22 +60,12 @@ readonly class RouteRegistrar
 
     private function registerPublic(): void
     {
-        $prefix = trim((string) $this->config->get(key: 'lara-vellum.routing.public.prefix', default: ''), '/');
-        $middleware = $this->publicMiddleware();
-
-        if ($prefix === '') {
-            $this->router
-                ->fallback([PublicPostController::class, 'show'])
-                ->middleware($middleware)
-                ->name('lara-vellum.posts.show');
-
-            return;
-        }
+        $prefix = $this->publicPrefix();
 
         $this->router
             ->get(uri: "$prefix/{slug}", action: [PublicPostController::class, 'show'])
-            ->middleware($middleware)
-            ->where(name: 'slug', expression: '[A-Za-z0-9\-]+')
+            ->middleware($this->publicMiddleware())
+            ->where(name: 'slug', expression: self::SLUG_PATTERN)
             ->name('lara-vellum.posts.show');
     }
 
@@ -95,6 +91,18 @@ readonly class RouteRegistrar
     private function dashboardMiddleware(): array
     {
         return (array) $this->config->get(key: 'lara-vellum.routing.dashboard.middleware', default: ['web']);
+    }
+
+    /**
+     * Posts always sit behind a prefix so the package cannot swallow routes
+     * belonging to the host application.
+     */
+    private function publicPrefix(): string
+    {
+        $configured = (string) $this->config->get(key: 'lara-vellum.routing.public.prefix', default: self::DEFAULT_PUBLIC_PREFIX);
+        $prefix = trim($configured, self::PREFIX_TRIM_CHARACTERS);
+
+        return $prefix === '' ? self::DEFAULT_PUBLIC_PREFIX : $prefix;
     }
 
     private function dashboardPrefix(): string

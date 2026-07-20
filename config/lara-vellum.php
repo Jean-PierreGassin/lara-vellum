@@ -23,11 +23,15 @@ return [
     | prefixes. The middleware groups wrap the published pages and the
     | authenticated dashboard respectively.
     |
+    | Posts always sit behind a prefix rather than at the site root, so the
+    | package never claims URLs the host application wants for itself. An
+    | empty value falls back to the default prefix.
+    |
     */
 
     'routing' => [
         'public' => [
-            'prefix' => env('LARA_VELLUM_PUBLIC_PREFIX', ''),
+            'prefix' => env('LARA_VELLUM_PUBLIC_PREFIX', 'posts'),
             'middleware' => ['web'],
         ],
 
