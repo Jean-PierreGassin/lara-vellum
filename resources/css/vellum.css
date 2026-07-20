@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@source "../views";
+
+/*
+ * Typographic styles for rendered post content (the .vellum-prose wrapper).
+ * Kept dependency-free (no typography plugin) so the package ships a single
+ * precompiled stylesheet with zero build step for the host application.
+ */
+@layer components {
+    .vellum-prose {
+        line-height: 1.75;
+        color: var(--color-stone-700);
+    }
+
+    .vellum-prose > * + * {
+        margin-top: 1.25em;
+    }
+
+    .vellum-prose h1,
+    .vellum-prose h2,
+    .vellum-prose h3,
+    .vellum-prose h4 {
+        color: var(--color-stone-900);
+        font-weight: 600;
+        line-height: 1.25;
+        margin-top: 2em;
+        margin-bottom: 0.75em;
+    }
+
+    .vellum-prose h1 { font-size: 1.875rem; }
+    .vellum-prose h2 { font-size: 1.5rem; }
+    .vellum-prose h3 { font-size: 1.25rem; }
+
+    .vellum-prose a {
+        color: var(--color-stone-900);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+    .vellum-prose strong { color: var(--color-stone-900); font-weight: 600; }
+
+    .vellum-prose ul,
+    .vellum-prose ol {
+        padding-left: 1.5em;
+    }
+
+    .vellum-prose ul { list-style: disc; }
+    .vellum-prose ol { list-style: decimal; }
+    .vellum-prose li { margin-top: 0.375em; }
+
+    .vellum-prose blockquote {
+        border-left: 3px solid var(--color-stone-300);
+        padding-left: 1em;
+        color: var(--color-stone-500);
+        font-style: italic;
+    }
+
+    .vellum-prose code {
+        background: var(--color-stone-100);
+        border-radius: 0.25rem;
+        padding: 0.15em 0.35em;
+        font-size: 0.875em;
+    }
+
+    .vellum-prose pre {
+        background: var(--color-stone-900);
+        color: var(--color-stone-100);
+        border-radius: 0.5rem;
+        padding: 1em 1.25em;
+        overflow-x: auto;
+    }
+
+    .vellum-prose pre code {
+        background: transparent;
+        padding: 0;
+        font-size: 0.875em;
+        color: inherit;
+    }
+
+    .vellum-prose img {
+        border-radius: 0.5rem;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .vellum-prose hr {
+        border-color: var(--color-stone-200);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .vellum-prose { color: var(--color-stone-300); }
+    .vellum-prose h1,
+    .vellum-prose h2,
+    .vellum-prose h3,
+    .vellum-prose h4,
+    .vellum-prose a,
+    .vellum-prose strong { color: var(--color-stone-100); }
+    .vellum-prose blockquote { color: var(--color-stone-400); border-left-color: var(--color-stone-700); }
+    .vellum-prose code { background: var(--color-stone-800); }
+    .vellum-prose hr { border-color: var(--color-stone-800); }
+}

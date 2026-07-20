@@ -1,5 +1,6 @@
 /build
 /vendor
+/node_modules
 composer.lock
 .php-cs-fixer.cache
 .phpunit.result.cache
@@ -7,3 +8,4 @@ composer.lock
 .idea
 .vscode
 .DS_Store
+/docs/agent-work

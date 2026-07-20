@@ -1,0 +1,29 @@
+<?php
+
+namespace JeanPierreGassin\LaraVellum\Http\Controllers;
+
+use Illuminate\Http\Response;
+use JeanPierreGassin\LaraVellum\Repositories\PostRepository;
+use JeanPierreGassin\LaraVellum\Services\PostService;
+
+readonly class PublicPostController
+{
+    public function __construct(
+        private PostRepository $posts,
+        private PostService $service,
+    ) {}
+
+    public function show(string $slug): Response
+    {
+        $post = $this->posts->findPublishedBySlug($slug);
+
+        if ($post === null) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        return new Response(
+            content: $this->service->readStaticPage($post),
+            headers: ['Content-Type' => 'text/html'],
+        );
+    }
+}
