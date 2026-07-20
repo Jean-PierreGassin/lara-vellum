@@ -31,6 +31,8 @@ readonly class AssetUrlGenerator
             return null;
         }
 
-        return substr(hash_file('sha256', $path), 0, self::VERSION_LENGTH);
+        $hash = hash_file('sha256', $path);
+
+        return $hash === false ? null : substr($hash, 0, self::VERSION_LENGTH);
     }
 }
