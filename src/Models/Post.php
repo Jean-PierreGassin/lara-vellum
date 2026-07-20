@@ -28,6 +28,8 @@ class Post extends Model
 {
     use SoftDeletes;
 
+    private const int WORDS_PER_MINUTE = 200;
+
     protected $fillable = [
         'author_id',
         'title',
@@ -50,6 +52,22 @@ class Post extends Model
         return $this->status->isPublished()
             && $this->published_at !== null
             && $this->published_at->isPast();
+    }
+
+    /**
+     * Counted off the Markdown source rather than the rendered HTML, so the
+     * figure is the same in the editor as it is on the published page.
+     */
+    public function wordCount(): int
+    {
+        $words = preg_split('/\s+/u', trim($this->body), flags: PREG_SPLIT_NO_EMPTY);
+
+        return $words === false ? 0 : count($words);
+    }
+
+    public function readingMinutes(): int
+    {
+        return max(1, (int) ceil($this->wordCount() / self::WORDS_PER_MINUTE));
     }
 
     /**

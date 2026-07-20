@@ -73,3 +73,20 @@ it('scopes to only draft posts', function () {
 
     expect(Post::query()->draft()->get()->pluck('id')->all())->toBe([$draft->id]);
 });
+
+it('counts the words in the markdown body, collapsing runs of whitespace', function (string $body, int $expected) {
+    expect(new Post(['body' => $body])->wordCount())->toBe($expected);
+})->with([
+    'empty' => ['', 0],
+    'single word' => ['hello', 1],
+    'padded and irregularly spaced' => ["  one\n\n two\tthree  ", 3],
+]);
+
+it('rounds reading time up and never reports less than a minute', function (int $words, int $expected) {
+    expect(new Post(['body' => trim(str_repeat('word ', $words))])->readingMinutes())->toBe($expected);
+})->with([
+    'empty' => [0, 1],
+    'well under a minute' => [10, 1],
+    'exactly a minute' => [200, 1],
+    'just over a minute' => [201, 2],
+]);
